@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Ouvrier {
+  id            String         @id @default(uuid())
+  nom           String
+  prenom        String
+  email         String?
+  photo         String?
+  dateEmbauche  DateTime?
+  statut        StatutOuvrier  @default(ACTIF)
+  habilitations Habilitation[]
+  appareils     Appareil[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@map("ouvriers")
+}
+
+enum StatutOuvrier {
+  ACTIF
+  INACTIF
+  SUSPENDU
+}
+
+model Habilitation {
+  id               String             @id @default(uuid())
+  nom              String
+  typeId           String
+  typeHabilitation TypeHabilitation   @relation(fields: [typeId], references: [id], onDelete: Restrict)
+  dateObtention    DateTime
+  dateExpiration   DateTime
+  entreprise       String?
+  statut           StatutHabilitation @default(VALIDE)
+  ouvrierId        String
+  ouvrier          Ouvrier            @relation(fields: [ouvrierId], references: [id], onDelete: Cascade)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  @@map("habilitations")
+}
+
+model TypeHabilitation {
+  id            String         @id @default(uuid())
+  nom           String         @unique
+  description   String?
+  entreprise    String?
+  dureeValidite String?
+  habilitations Habilitation[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@map("type_habilitations")
+}
+
+enum StatutHabilitation {
+  VALIDE
+  EXPIRE
+  SUSPENDU
+}
+
+model Engin {
+  id                      String      @id @default(uuid())
+  type                    String
+  marque                  String?
+  modele                  String?
+  immatriculation         String      @unique
+  photo                   String?
+  dateControle            DateTime?
+  prochainControle        DateTime?
+  dateExpirationAssurance DateTime?
+  vpgFournit              String?
+  poste                   String?
+  statut                  StatutEngin @default(CONFORME)
+  controles               String[]    @default([])
+  appareils               Appareil[]
+  createdAt               DateTime    @default(now())
+  updatedAt               DateTime    @updatedAt
+
+  @@map("engins")
+}
+
+enum StatutEngin {
+  CONFORME
+  NON_CONFORME
+  EXPIRE_BIENTOT
+}
+
+model Appareil {
+  id                   String         @id @default(uuid())
+  nom                  String
+  reference            String         @unique
+  type                 String
+  statut               StatutAppareil @default(DISPONIBLE)
+  localisation         String?
+  dateAcquisition      DateTime?
+  dateDerniereRevision DateTime?
+  ouvrierAssigneId     String?
+  enginAssigneId       String?
+  ouvrierAssigne       Ouvrier?       @relation(fields: [ouvrierAssigneId], references: [id], onDelete: SetNull)
+  enginAssigne         Engin?         @relation(fields: [enginAssigneId], references: [id], onDelete: SetNull)
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+
+  @@map("appareils")
+}
+
+enum StatutAppareil {
+  DISPONIBLE
+  EN_SERVICE
+  EN_MAINTENANCE
+  HORS_SERVICE
+}
