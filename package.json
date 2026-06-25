@@ -44,3 +44,5 @@
     "typescript": "^5.9.3"
   }
 }
+
+"start:railway": "npx prisma migrate deploy && node dist/main"
