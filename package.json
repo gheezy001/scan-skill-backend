@@ -9,6 +9,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main",
+    "start:railway": "npx prisma migrate deploy && node dist/main",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
     "prisma:seed": "ts-node prisma/seed.ts"
@@ -44,5 +45,3 @@
     "typescript": "^5.9.3"
   }
 }
-
-"start:railway": "npx prisma migrate deploy && node dist/main"
