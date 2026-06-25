@@ -19,7 +19,7 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
-  const port = process.env.PORT ?? 8000;
+  const port = process.env.PORT ?? 10000;
   await app.listen(port, '0.0.0.0');
   console.log(`🚀 Scan Skill API démarrée sur http://localhost:${port}`);
 }
