@@ -1,0 +1,112 @@
+import { PrismaService } from '../prisma/prisma.service';
+export declare class EnginsService {
+    private prisma;
+    constructor(prisma: PrismaService);
+    refreshStatutsEngins(): Promise<void>;
+    private calculateStatut;
+    findAll(search?: string, statut?: string, page?: number, limit?: number): Promise<{
+        data: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            statut: import(".prisma/client").$Enums.StatutEngin;
+            photo: string | null;
+            type: string;
+            marque: string | null;
+            modele: string | null;
+            immatriculation: string;
+            dateControle: Date | null;
+            prochainControle: Date | null;
+            dateExpirationAssurance: Date | null;
+            vpgFournit: string | null;
+            poste: string | null;
+            controles: string[];
+        }[];
+        total: number;
+        page: number;
+        limit: number;
+    }>;
+    findOne(id: string): Promise<{
+        appareils: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            nom: string;
+            statut: import(".prisma/client").$Enums.StatutAppareil;
+            reference: string;
+            type: string;
+            localisation: string | null;
+            dateAcquisition: Date | null;
+            dateDerniereRevision: Date | null;
+            ouvrierAssigneId: string | null;
+            enginAssigneId: string | null;
+        }[];
+    } & {
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        statut: import(".prisma/client").$Enums.StatutEngin;
+        photo: string | null;
+        type: string;
+        marque: string | null;
+        modele: string | null;
+        immatriculation: string;
+        dateControle: Date | null;
+        prochainControle: Date | null;
+        dateExpirationAssurance: Date | null;
+        vpgFournit: string | null;
+        poste: string | null;
+        controles: string[];
+    }>;
+    create(data: any): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        statut: import(".prisma/client").$Enums.StatutEngin;
+        photo: string | null;
+        type: string;
+        marque: string | null;
+        modele: string | null;
+        immatriculation: string;
+        dateControle: Date | null;
+        prochainControle: Date | null;
+        dateExpirationAssurance: Date | null;
+        vpgFournit: string | null;
+        poste: string | null;
+        controles: string[];
+    }>;
+    update(id: string, data: any): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        statut: import(".prisma/client").$Enums.StatutEngin;
+        photo: string | null;
+        type: string;
+        marque: string | null;
+        modele: string | null;
+        immatriculation: string;
+        dateControle: Date | null;
+        prochainControle: Date | null;
+        dateExpirationAssurance: Date | null;
+        vpgFournit: string | null;
+        poste: string | null;
+        controles: string[];
+    }>;
+    delete(id: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        statut: import(".prisma/client").$Enums.StatutEngin;
+        photo: string | null;
+        type: string;
+        marque: string | null;
+        modele: string | null;
+        immatriculation: string;
+        dateControle: Date | null;
+        prochainControle: Date | null;
+        dateExpirationAssurance: Date | null;
+        vpgFournit: string | null;
+        poste: string | null;
+        controles: string[];
+    }>;
+}
