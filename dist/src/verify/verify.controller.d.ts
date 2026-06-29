@@ -7,15 +7,20 @@ export declare class VerifyController {
         conforme: boolean;
         entity: {
             id: string;
+            role: string;
             nom: string;
+            entreprise: string;
             habilitations: {
                 id: string;
                 nom: string;
                 dateExpiration: Date;
+                document: string;
                 statut: import(".prisma/client").$Enums.StatutHabilitation;
             }[];
-            statut: import(".prisma/client").$Enums.StatutOuvrier;
+            statut: import(".prisma/client").$Enums.StatutCollaborateur;
             prenom: string;
+            telephone: string;
+            photo: string;
         };
     } | {
         type: string;
@@ -27,9 +32,12 @@ export declare class VerifyController {
             marque: string;
             modele: string;
             immatriculation: string;
-            prochainControle: Date;
+            lieuAffectation: string;
+            dernierVisiteTechnique: Date;
+            prochainVisiteTechnique: Date;
+            dateExpirationVGP: Date;
             dateExpirationAssurance: Date;
-            vpgFournit: string;
+            vgpFournit: string;
         };
     } | {
         type: string;
@@ -41,6 +49,7 @@ export declare class VerifyController {
             reference: string;
             type: string;
             localisation: string;
+            documentationTechnique: string;
         };
     }>;
 }

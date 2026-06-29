@@ -22,45 +22,50 @@ let AiAnalysisController = class AiAnalysisController {
         const now = new Date();
         const daysLeft = (d) => Math.ceil((new Date(d).getTime() - now.getTime()) / 86400000);
         let prompt = '';
-        if (type === 'ouvrier') {
+        if (type === 'collaborateur' || type === 'ouvrier') {
             const habs = entity.habilitations ?? [];
             const expirees = habs.filter((h) => h.statut === 'EXPIRE').map((h) => h.nom);
             const bientot = habs
                 .filter((h) => h.statut === 'VALIDE' && daysLeft(h.dateExpiration) <= 30 && daysLeft(h.dateExpiration) > 0)
                 .map((h) => `${h.nom} (J-${daysLeft(h.dateExpiration)})`);
             const valides = habs.filter((h) => h.statut === 'VALIDE').length;
-            prompt = `Tu es un assistant HSE expert sur chantier électrique. Analyse la conformité de cet ouvrier.
-Réponds en français, de manière directe et claire, en 2-4 phrases maximum.
-Commence TOUJOURS par "✅ Conforme —", "🚨 Non conforme —" ou "⚠️ Attention requise —".
+            prompt = `Tu es un assistant HSE expert sur chantier electrique. Analyse la conformite de ce collaborateur.
+Reponds en francais, de maniere directe et claire, en 2-4 phrases maximum.
+Commence TOUJOURS par "Conforme", "Non conforme" ou "Attention requise".
 
-Ouvrier : ${entity.prenom} ${entity.nom}
-Habilitations expirées (${expirees.length}) : ${expirees.join(', ') || 'aucune'}
+Collaborateur : ${entity.prenom} ${entity.nom}
+Role : ${entity.role || 'non renseigne'}
+Entreprise : ${entity.entreprise || 'non renseignee'}
+Habilitations expirees (${expirees.length}) : ${expirees.join(', ') || 'aucune'}
 Expirant dans 30 jours : ${bientot.join(', ') || 'aucune'}
 Habilitations valides : ${valides}/${habs.length}
 
-Donne un verdict immédiatement actionnable sur le terrain.`;
+Donne un verdict immediatement actionnable sur le terrain.`;
         }
         else if (type === 'engin') {
-            const jAssurance = entity.dateExpirationAssurance ? daysLeft(entity.dateExpirationAssurance) : null;
-            const jControle = entity.prochainControle ? daysLeft(entity.prochainControle) : null;
-            prompt = `Tu es un assistant HSE expert. Analyse la conformité de cet engin sur chantier.
-Réponds en français, en 2-4 phrases. Commence par "✅ Conforme —", "🚨 Non conforme —" ou "⚠️ Attention requise —".
+            const jVGP = entity.dateExpirationVGP ? daysLeft(entity.dateExpirationVGP) : null;
+            const jVisite = entity.prochainVisiteTechnique ? daysLeft(entity.prochainVisiteTechnique) : null;
+            const jAss = entity.dateExpirationAssurance ? daysLeft(entity.dateExpirationAssurance) : null;
+            prompt = `Tu es un assistant HSE expert. Analyse la conformite de cet engin sur chantier.
+Reponds en francais, en 2-4 phrases. Commence par "Conforme", "Non conforme" ou "Attention requise".
 
 Engin : ${entity.type} ${entity.marque ?? ''} ${entity.modele ?? ''} — ${entity.immatriculation}
-Statut actuel : ${entity.statut}
-Jours avant expiration assurance : ${jAssurance !== null ? jAssurance : 'non renseigné'}
-Jours avant prochain contrôle : ${jControle !== null ? jControle : 'non renseigné'}
-VPG fourni : ${entity.vpgFournit ?? 'non renseigné'}
+Lieu d'affectation : ${entity.lieuAffectation || 'non renseigne'}
+Statut : ${entity.statut}
+Jours avant expiration VGP : ${jVGP !== null ? jVGP : 'non renseigne'}
+Jours avant prochaine visite technique : ${jVisite !== null ? jVisite : 'non renseigne'}
+Jours avant expiration assurance : ${jAss !== null ? jAss : 'non renseigne'}
 
-Verdict immédiatement actionnable.`;
+Verdict immediatement actionnable.`;
         }
         else if (type === 'appareil') {
-            prompt = `Tu es un assistant HSE. Analyse la disponibilité de cet appareil.
-Réponds en français, en 1-2 phrases. Commence par "✅ Opérationnel —", "🚨 Indisponible —" ou "⚠️ En maintenance —".
+            prompt = `Tu es un assistant HSE. Analyse la disponibilite de cet appareillage.
+Reponds en francais, en 1-2 phrases. Commence par "Operationnel", "Indisponible" ou "En maintenance".
 
-Appareil : ${entity.nom} (réf. ${entity.reference})
+Appareillage : ${entity.nom} (ref. ${entity.reference})
+Type : ${entity.type}
 Statut : ${entity.statut}
-Localisation : ${entity.localisation ?? 'non renseignée'}`;
+Localisation : ${entity.localisation ?? 'non renseignee'}`;
         }
         if (!prompt)
             return { analyse: null };

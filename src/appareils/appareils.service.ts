@@ -20,7 +20,7 @@ export class AppareilsService {
     const [data, total] = await Promise.all([
       this.prisma.appareil.findMany({
         where,
-        include: { ouvrierAssigne: true, enginAssigne: true },
+        include: { collaborateurAssigne: true, enginAssigne: true },
         orderBy: { createdAt: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
@@ -33,19 +33,19 @@ export class AppareilsService {
   async findOne(id: string) {
     const appareil = await this.prisma.appareil.findUnique({
       where: { id },
-      include: { ouvrierAssigne: true, enginAssigne: true },
+      include: { collaborateurAssigne: true, enginAssigne: true },
     });
     if (!appareil) throw new NotFoundException(`Appareil ${id} non trouvé`);
     return appareil;
   }
 
   async create(data: any) {
-    return this.prisma.appareil.create({ data, include: { ouvrierAssigne: true, enginAssigne: true } });
+    return this.prisma.appareil.create({ data, include: { collaborateurAssigne: true, enginAssigne: true } });
   }
 
   async update(id: string, data: any) {
     await this.findOne(id);
-    return this.prisma.appareil.update({ where: { id }, data, include: { ouvrierAssigne: true, enginAssigne: true } });
+    return this.prisma.appareil.update({ where: { id }, data, include: { collaborateurAssigne: true, enginAssigne: true } });
   }
 
   async delete(id: string) {

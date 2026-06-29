@@ -4,16 +4,26 @@ export declare class AppareilsService {
     constructor(prisma: PrismaService);
     findAll(search?: string, statut?: string, page?: number, limit?: number): Promise<{
         data: ({
-            ouvrierAssigne: {
+            collaborateurAssigne: {
                 id: string;
                 email: string | null;
+                role: string;
                 createdAt: Date;
                 updatedAt: Date;
                 nom: string;
-                statut: import(".prisma/client").$Enums.StatutOuvrier;
+                entreprise: string | null;
+                statut: import(".prisma/client").$Enums.StatutCollaborateur;
                 prenom: string;
+                telephone: string;
                 photo: string | null;
                 dateEmbauche: Date | null;
+                adresse: string | null;
+                nationalite: string | null;
+                groupeSanguin: string | null;
+                numeroPieceIdentite: string | null;
+                typePieceIdentite: import(".prisma/client").$Enums.TypePieceIdentite | null;
+                contactUrgenceNom: string | null;
+                contactUrgenceTel: string | null;
             };
             enginAssigne: {
                 id: string;
@@ -25,11 +35,13 @@ export declare class AppareilsService {
                 marque: string | null;
                 modele: string | null;
                 immatriculation: string;
+                lieuAffectation: string | null;
                 dateControle: Date | null;
-                prochainControle: Date | null;
+                dernierVisiteTechnique: Date | null;
+                prochainVisiteTechnique: Date | null;
+                dateExpirationVGP: Date | null;
                 dateExpirationAssurance: Date | null;
-                vpgFournit: string | null;
-                poste: string | null;
+                vgpFournit: string | null;
                 controles: string[];
             };
         } & {
@@ -41,9 +53,10 @@ export declare class AppareilsService {
             reference: string;
             type: string;
             localisation: string | null;
+            documentationTechnique: string | null;
             dateAcquisition: Date | null;
             dateDerniereRevision: Date | null;
-            ouvrierAssigneId: string | null;
+            collaborateurAssigneId: string | null;
             enginAssigneId: string | null;
         })[];
         total: number;
@@ -51,16 +64,26 @@ export declare class AppareilsService {
         limit: number;
     }>;
     findOne(id: string): Promise<{
-        ouvrierAssigne: {
+        collaborateurAssigne: {
             id: string;
             email: string | null;
+            role: string;
             createdAt: Date;
             updatedAt: Date;
             nom: string;
-            statut: import(".prisma/client").$Enums.StatutOuvrier;
+            entreprise: string | null;
+            statut: import(".prisma/client").$Enums.StatutCollaborateur;
             prenom: string;
+            telephone: string;
             photo: string | null;
             dateEmbauche: Date | null;
+            adresse: string | null;
+            nationalite: string | null;
+            groupeSanguin: string | null;
+            numeroPieceIdentite: string | null;
+            typePieceIdentite: import(".prisma/client").$Enums.TypePieceIdentite | null;
+            contactUrgenceNom: string | null;
+            contactUrgenceTel: string | null;
         };
         enginAssigne: {
             id: string;
@@ -72,11 +95,13 @@ export declare class AppareilsService {
             marque: string | null;
             modele: string | null;
             immatriculation: string;
+            lieuAffectation: string | null;
             dateControle: Date | null;
-            prochainControle: Date | null;
+            dernierVisiteTechnique: Date | null;
+            prochainVisiteTechnique: Date | null;
+            dateExpirationVGP: Date | null;
             dateExpirationAssurance: Date | null;
-            vpgFournit: string | null;
-            poste: string | null;
+            vgpFournit: string | null;
             controles: string[];
         };
     } & {
@@ -88,22 +113,33 @@ export declare class AppareilsService {
         reference: string;
         type: string;
         localisation: string | null;
+        documentationTechnique: string | null;
         dateAcquisition: Date | null;
         dateDerniereRevision: Date | null;
-        ouvrierAssigneId: string | null;
+        collaborateurAssigneId: string | null;
         enginAssigneId: string | null;
     }>;
     create(data: any): Promise<{
-        ouvrierAssigne: {
+        collaborateurAssigne: {
             id: string;
             email: string | null;
+            role: string;
             createdAt: Date;
             updatedAt: Date;
             nom: string;
-            statut: import(".prisma/client").$Enums.StatutOuvrier;
+            entreprise: string | null;
+            statut: import(".prisma/client").$Enums.StatutCollaborateur;
             prenom: string;
+            telephone: string;
             photo: string | null;
             dateEmbauche: Date | null;
+            adresse: string | null;
+            nationalite: string | null;
+            groupeSanguin: string | null;
+            numeroPieceIdentite: string | null;
+            typePieceIdentite: import(".prisma/client").$Enums.TypePieceIdentite | null;
+            contactUrgenceNom: string | null;
+            contactUrgenceTel: string | null;
         };
         enginAssigne: {
             id: string;
@@ -115,11 +151,13 @@ export declare class AppareilsService {
             marque: string | null;
             modele: string | null;
             immatriculation: string;
+            lieuAffectation: string | null;
             dateControle: Date | null;
-            prochainControle: Date | null;
+            dernierVisiteTechnique: Date | null;
+            prochainVisiteTechnique: Date | null;
+            dateExpirationVGP: Date | null;
             dateExpirationAssurance: Date | null;
-            vpgFournit: string | null;
-            poste: string | null;
+            vgpFournit: string | null;
             controles: string[];
         };
     } & {
@@ -131,22 +169,33 @@ export declare class AppareilsService {
         reference: string;
         type: string;
         localisation: string | null;
+        documentationTechnique: string | null;
         dateAcquisition: Date | null;
         dateDerniereRevision: Date | null;
-        ouvrierAssigneId: string | null;
+        collaborateurAssigneId: string | null;
         enginAssigneId: string | null;
     }>;
     update(id: string, data: any): Promise<{
-        ouvrierAssigne: {
+        collaborateurAssigne: {
             id: string;
             email: string | null;
+            role: string;
             createdAt: Date;
             updatedAt: Date;
             nom: string;
-            statut: import(".prisma/client").$Enums.StatutOuvrier;
+            entreprise: string | null;
+            statut: import(".prisma/client").$Enums.StatutCollaborateur;
             prenom: string;
+            telephone: string;
             photo: string | null;
             dateEmbauche: Date | null;
+            adresse: string | null;
+            nationalite: string | null;
+            groupeSanguin: string | null;
+            numeroPieceIdentite: string | null;
+            typePieceIdentite: import(".prisma/client").$Enums.TypePieceIdentite | null;
+            contactUrgenceNom: string | null;
+            contactUrgenceTel: string | null;
         };
         enginAssigne: {
             id: string;
@@ -158,11 +207,13 @@ export declare class AppareilsService {
             marque: string | null;
             modele: string | null;
             immatriculation: string;
+            lieuAffectation: string | null;
             dateControle: Date | null;
-            prochainControle: Date | null;
+            dernierVisiteTechnique: Date | null;
+            prochainVisiteTechnique: Date | null;
+            dateExpirationVGP: Date | null;
             dateExpirationAssurance: Date | null;
-            vpgFournit: string | null;
-            poste: string | null;
+            vgpFournit: string | null;
             controles: string[];
         };
     } & {
@@ -174,9 +225,10 @@ export declare class AppareilsService {
         reference: string;
         type: string;
         localisation: string | null;
+        documentationTechnique: string | null;
         dateAcquisition: Date | null;
         dateDerniereRevision: Date | null;
-        ouvrierAssigneId: string | null;
+        collaborateurAssigneId: string | null;
         enginAssigneId: string | null;
     }>;
     delete(id: string): Promise<{
@@ -188,9 +240,10 @@ export declare class AppareilsService {
         reference: string;
         type: string;
         localisation: string | null;
+        documentationTechnique: string | null;
         dateAcquisition: Date | null;
         dateDerniereRevision: Date | null;
-        ouvrierAssigneId: string | null;
+        collaborateurAssigneId: string | null;
         enginAssigneId: string | null;
     }>;
 }

@@ -13,11 +13,13 @@ export declare class EnginsController {
             marque: string | null;
             modele: string | null;
             immatriculation: string;
+            lieuAffectation: string | null;
             dateControle: Date | null;
-            prochainControle: Date | null;
+            dernierVisiteTechnique: Date | null;
+            prochainVisiteTechnique: Date | null;
+            dateExpirationVGP: Date | null;
             dateExpirationAssurance: Date | null;
-            vpgFournit: string | null;
-            poste: string | null;
+            vgpFournit: string | null;
             controles: string[];
         }[];
         total: number;
@@ -34,9 +36,10 @@ export declare class EnginsController {
             reference: string;
             type: string;
             localisation: string | null;
+            documentationTechnique: string | null;
             dateAcquisition: Date | null;
             dateDerniereRevision: Date | null;
-            ouvrierAssigneId: string | null;
+            collaborateurAssigneId: string | null;
             enginAssigneId: string | null;
         }[];
     } & {
@@ -49,11 +52,13 @@ export declare class EnginsController {
         marque: string | null;
         modele: string | null;
         immatriculation: string;
+        lieuAffectation: string | null;
         dateControle: Date | null;
-        prochainControle: Date | null;
+        dernierVisiteTechnique: Date | null;
+        prochainVisiteTechnique: Date | null;
+        dateExpirationVGP: Date | null;
         dateExpirationAssurance: Date | null;
-        vpgFournit: string | null;
-        poste: string | null;
+        vgpFournit: string | null;
         controles: string[];
     }>;
     create(data: any): Promise<{
@@ -66,11 +71,13 @@ export declare class EnginsController {
         marque: string | null;
         modele: string | null;
         immatriculation: string;
+        lieuAffectation: string | null;
         dateControle: Date | null;
-        prochainControle: Date | null;
+        dernierVisiteTechnique: Date | null;
+        prochainVisiteTechnique: Date | null;
+        dateExpirationVGP: Date | null;
         dateExpirationAssurance: Date | null;
-        vpgFournit: string | null;
-        poste: string | null;
+        vgpFournit: string | null;
         controles: string[];
     }>;
     update(id: string, data: any): Promise<{
@@ -83,11 +90,13 @@ export declare class EnginsController {
         marque: string | null;
         modele: string | null;
         immatriculation: string;
+        lieuAffectation: string | null;
         dateControle: Date | null;
-        prochainControle: Date | null;
+        dernierVisiteTechnique: Date | null;
+        prochainVisiteTechnique: Date | null;
+        dateExpirationVGP: Date | null;
         dateExpirationAssurance: Date | null;
-        vpgFournit: string | null;
-        poste: string | null;
+        vgpFournit: string | null;
         controles: string[];
     }>;
     delete(id: string): Promise<{
@@ -100,11 +109,13 @@ export declare class EnginsController {
         marque: string | null;
         modele: string | null;
         immatriculation: string;
+        lieuAffectation: string | null;
         dateControle: Date | null;
-        prochainControle: Date | null;
+        dernierVisiteTechnique: Date | null;
+        prochainVisiteTechnique: Date | null;
+        dateExpirationVGP: Date | null;
         dateExpirationAssurance: Date | null;
-        vpgFournit: string | null;
-        poste: string | null;
+        vgpFournit: string | null;
         controles: string[];
     }>;
 }

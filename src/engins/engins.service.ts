@@ -11,36 +11,36 @@ export class EnginsService {
   async refreshStatutsEngins() {
     const now = new Date();
     const thirtyDays = new Date(now.getTime() + 30 * 86400000);
-
-    // Marquer EXPIRE si contrôle ou assurance dépassé
     const engins = await this.prisma.engin.findMany();
     for (const engin of engins) {
-      const assuranceExpire = engin.dateExpirationAssurance && new Date(engin.dateExpirationAssurance) < now;
-      const controleExpire = engin.prochainControle && new Date(engin.prochainControle) < now;
-      const expireBientot =
-        !assuranceExpire && !controleExpire &&
-        ((engin.dateExpirationAssurance && new Date(engin.dateExpirationAssurance) < thirtyDays) ||
-          (engin.prochainControle && new Date(engin.prochainControle) < thirtyDays));
-
-      const newStatut = assuranceExpire || controleExpire ? 'NON_CONFORME' : expireBientot ? 'EXPIRE_BIENTOT' : 'CONFORME';
+      const newStatut = this.calculateStatut(
+        engin.dateExpirationAssurance,
+        engin.prochainVisiteTechnique,
+        engin.dateExpirationVGP,
+      );
       if (newStatut !== engin.statut) {
         await this.prisma.engin.update({ where: { id: engin.id }, data: { statut: newStatut as any } });
       }
     }
-    console.log(`[CRON] Statuts engins mis à jour`);
   }
 
-  private calculateStatut(dateExpirationAssurance?: Date, prochainControle?: Date): string {
+  private calculateStatut(
+    dateExpirationAssurance?: Date | null,
+    prochainVisiteTechnique?: Date | null,
+    dateExpirationVGP?: Date | null,
+  ): string {
     const now = new Date();
     const thirtyDays = new Date(now.getTime() + 30 * 86400000);
-    if (
-      (dateExpirationAssurance && new Date(dateExpirationAssurance) < now) ||
-      (prochainControle && new Date(prochainControle) < now)
-    ) return 'NON_CONFORME';
-    if (
-      (dateExpirationAssurance && new Date(dateExpirationAssurance) < thirtyDays) ||
-      (prochainControle && new Date(prochainControle) < thirtyDays)
-    ) return 'EXPIRE_BIENTOT';
+
+    const isExpired = (d?: Date | null) => d && new Date(d) < now;
+    const isSoon = (d?: Date | null) => d && new Date(d) >= now && new Date(d) < thirtyDays;
+
+    if (isExpired(dateExpirationAssurance) || isExpired(prochainVisiteTechnique) || isExpired(dateExpirationVGP)) {
+      return 'NON_CONFORME';
+    }
+    if (isSoon(dateExpirationAssurance) || isSoon(prochainVisiteTechnique) || isSoon(dateExpirationVGP)) {
+      return 'EXPIRE_BIENTOT';
+    }
     return 'CONFORME';
   }
 
@@ -52,6 +52,7 @@ export class EnginsService {
         { marque: { contains: search, mode: 'insensitive' } },
         { modele: { contains: search, mode: 'insensitive' } },
         { immatriculation: { contains: search, mode: 'insensitive' } },
+        { lieuAffectation: { contains: search, mode: 'insensitive' } },
       ];
     }
     if (statut && statut !== 'tous') where.statut = statut as any;
@@ -65,18 +66,30 @@ export class EnginsService {
 
   async findOne(id: string) {
     const engin = await this.prisma.engin.findUnique({ where: { id }, include: { appareils: true } });
-    if (!engin) throw new NotFoundException(`Engin ${id} non trouvé`);
+    if (!engin) throw new NotFoundException(`Engin ${id} non trouve`);
     return engin;
   }
 
   async create(data: any) {
-    const statut = this.calculateStatut(data.dateExpirationAssurance, data.prochainControle);
+    if (data.dateControle) data.dateControle = new Date(data.dateControle);
+    if (data.dernierVisiteTechnique) data.dernierVisiteTechnique = new Date(data.dernierVisiteTechnique);
+    if (data.prochainVisiteTechnique) data.prochainVisiteTechnique = new Date(data.prochainVisiteTechnique);
+    if (data.dateExpirationVGP) data.dateExpirationVGP = new Date(data.dateExpirationVGP);
+    if (data.dateExpirationAssurance) data.dateExpirationAssurance = new Date(data.dateExpirationAssurance);
+
+    const statut = this.calculateStatut(data.dateExpirationAssurance, data.prochainVisiteTechnique, data.dateExpirationVGP);
     return this.prisma.engin.create({ data: { ...data, statut: statut as any } });
   }
 
   async update(id: string, data: any) {
     await this.findOne(id);
-    const statut = this.calculateStatut(data.dateExpirationAssurance, data.prochainControle);
+    if (data.dateControle) data.dateControle = new Date(data.dateControle);
+    if (data.dernierVisiteTechnique) data.dernierVisiteTechnique = new Date(data.dernierVisiteTechnique);
+    if (data.prochainVisiteTechnique) data.prochainVisiteTechnique = new Date(data.prochainVisiteTechnique);
+    if (data.dateExpirationVGP) data.dateExpirationVGP = new Date(data.dateExpirationVGP);
+    if (data.dateExpirationAssurance) data.dateExpirationAssurance = new Date(data.dateExpirationAssurance);
+
+    const statut = this.calculateStatut(data.dateExpirationAssurance, data.prochainVisiteTechnique, data.dateExpirationVGP);
     return this.prisma.engin.update({ where: { id }, data: { ...data, statut: statut as any } });
   }
 

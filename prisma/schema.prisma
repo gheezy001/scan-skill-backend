@@ -25,41 +25,57 @@ enum Role {
   ADMIN
 }
 
-model Ouvrier {
-  id            String         @id @default(uuid())
-  nom           String
-  prenom        String
-  email         String?
-  photo         String?
-  dateEmbauche  DateTime?
-  statut        StatutOuvrier  @default(ACTIF)
-  habilitations Habilitation[]
-  appareils     Appareil[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+model Collaborateur {
+  id                  String               @id @default(uuid())
+  nom                 String
+  prenom              String
+  telephone           String
+  email               String?
+  photo               String?
+  role                String
+  entreprise          String?
+  dateEmbauche        DateTime?
+  adresse             String?
+  nationalite         String?
+  groupeSanguin       String?
+  numeroPieceIdentite String?
+  typePieceIdentite   TypePieceIdentite?
+  contactUrgenceNom   String?
+  contactUrgenceTel   String?
+  statut              StatutCollaborateur  @default(ACTIF)
+  habilitations       Habilitation[]
+  appareils           Appareil[]
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
 
-  @@map("ouvriers")
+  @@map("collaborateurs")
 }
 
-enum StatutOuvrier {
+enum TypePieceIdentite {
+  CIN
+  PASSEPORT
+}
+
+enum StatutCollaborateur {
   ACTIF
   INACTIF
   SUSPENDU
 }
 
 model Habilitation {
-  id               String             @id @default(uuid())
-  nom              String
-  typeId           String
-  typeHabilitation TypeHabilitation   @relation(fields: [typeId], references: [id], onDelete: Restrict)
-  dateObtention    DateTime
-  dateExpiration   DateTime
-  entreprise       String?
-  statut           StatutHabilitation @default(VALIDE)
-  ouvrierId        String
-  ouvrier          Ouvrier            @relation(fields: [ouvrierId], references: [id], onDelete: Cascade)
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  id                String             @id @default(uuid())
+  nom               String
+  typeId            String
+  typeHabilitation  TypeHabilitation   @relation(fields: [typeId], references: [id], onDelete: Restrict)
+  dateObtention     DateTime
+  dateExpiration    DateTime
+  entreprise        String?
+  document          String?
+  statut            StatutHabilitation @default(VALIDE)
+  collaborateurId   String
+  collaborateur     Collaborateur      @relation(fields: [collaborateurId], references: [id], onDelete: Cascade)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
 
   @@map("habilitations")
 }
@@ -90,11 +106,13 @@ model Engin {
   modele                  String?
   immatriculation         String      @unique
   photo                   String?
+  lieuAffectation         String?
   dateControle            DateTime?
-  prochainControle        DateTime?
+  dernierVisiteTechnique  DateTime?
+  prochainVisiteTechnique DateTime?
+  dateExpirationVGP       DateTime?
   dateExpirationAssurance DateTime?
-  vpgFournit              String?
-  poste                   String?
+  vgpFournit              String?
   statut                  StatutEngin @default(CONFORME)
   controles               String[]    @default([])
   appareils               Appareil[]
@@ -117,11 +135,12 @@ model Appareil {
   type                 String
   statut               StatutAppareil @default(DISPONIBLE)
   localisation         String?
+  documentationTechnique String?
   dateAcquisition      DateTime?
   dateDerniereRevision DateTime?
-  ouvrierAssigneId     String?
+  collaborateurAssigneId String?
   enginAssigneId       String?
-  ouvrierAssigne       Ouvrier?       @relation(fields: [ouvrierAssigneId], references: [id], onDelete: SetNull)
+  collaborateurAssigne Collaborateur? @relation(fields: [collaborateurAssigneId], references: [id], onDelete: SetNull)
   enginAssigne         Engin?         @relation(fields: [enginAssigneId], references: [id], onDelete: SetNull)
   createdAt            DateTime       @default(now())
   updatedAt            DateTime       @updatedAt

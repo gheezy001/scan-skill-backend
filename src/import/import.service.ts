@@ -28,15 +28,19 @@ export class ImportService {
     for (const row of parsed.data as any[]) {
       try {
         const email = row.email || row.Email;
+        const telephone = row.telephone || row.Telephone || row.tel || '';
         if (email) {
-          const exists = await this.prisma.ouvrier.findFirst({ where: { email } });
+          const exists = await this.prisma.collaborateur.findFirst({ where: { email } });
           if (exists) { results.skippedExisting++; continue; }
         }
-        await this.prisma.ouvrier.create({
+        await this.prisma.collaborateur.create({
           data: {
             nom: row.nom || row.Nom,
             prenom: row.prenom || row.Prenom,
+            telephone,
             email,
+            role: row.role || row.Role || '',
+            entreprise: row.entreprise || row.Entreprise,
             dateEmbauche: this.parseDate(row.dateEmbauche || row.date_embauche),
             statut: ['ACTIF', 'INACTIF', 'SUSPENDU'].includes(row.statut?.toUpperCase()) ? row.statut.toUpperCase() : 'ACTIF',
           },
@@ -56,8 +60,8 @@ export class ImportService {
     for (const row of parsed.data as any[]) {
       try {
         const email = row.email || row.Email;
-        const ouvrier = await this.prisma.ouvrier.findFirst({ where: { email } });
-        if (!ouvrier) { results.skippedNotFound++; continue; }
+        const collaborateur = await this.prisma.collaborateur.findFirst({ where: { email } });
+        if (!collaborateur) { results.skippedNotFound++; continue; }
 
         const typeNom = row.type_habilitation || row.type;
         let type = await this.prisma.typeHabilitation.findFirst({ where: { nom: { equals: typeNom, mode: 'insensitive' } } });
@@ -73,7 +77,7 @@ export class ImportService {
           data: {
             nom: type.nom,
             typeId: type.id,
-            ouvrierId: ouvrier.id,
+            collaborateurId: collaborateur.id,
             dateObtention,
             dateExpiration,
             entreprise: row.entreprise,
@@ -99,15 +103,19 @@ export class ImportService {
         if (exists) { results.skippedExisting++; continue; }
 
         const dateExpirationAssurance = this.parseDate(row.date_expiration_assurance);
-        const prochainControle = this.parseDate(row.prochain_controle);
+        const prochainVisiteTechnique = this.parseDate(row.prochain_controle || row.prochaine_visite_technique);
+        const dateExpirationVGP = this.parseDate(row.date_expiration_vgp);
         const now = new Date();
         const thirtyDays = new Date(now.getTime() + 30 * 86400000);
-        const statut =
-          (dateExpirationAssurance && dateExpirationAssurance < now) || (prochainControle && prochainControle < now)
-            ? 'NON_CONFORME'
-            : (dateExpirationAssurance && dateExpirationAssurance < thirtyDays) || (prochainControle && prochainControle < thirtyDays)
-            ? 'EXPIRE_BIENTOT'
-            : 'CONFORME';
+
+        const isExpired = (d?: Date) => d && d < now;
+        const isSoon = (d?: Date) => d && d >= now && d < thirtyDays;
+
+        const statut = isExpired(dateExpirationAssurance) || isExpired(prochainVisiteTechnique) || isExpired(dateExpirationVGP)
+          ? 'NON_CONFORME'
+          : isSoon(dateExpirationAssurance) || isSoon(prochainVisiteTechnique) || isSoon(dateExpirationVGP)
+          ? 'EXPIRE_BIENTOT'
+          : 'CONFORME';
 
         await this.prisma.engin.create({
           data: {
@@ -115,11 +123,12 @@ export class ImportService {
             marque: row.marque,
             modele: row.modele,
             immatriculation: immat,
+            lieuAffectation: row.lieu_affectation || row.poste,
             dateControle: this.parseDate(row.date_controle),
-            prochainControle,
+            prochainVisiteTechnique,
+            dateExpirationVGP,
             dateExpirationAssurance,
-            vpgFournit: row.vpg_fournit,
-            poste: row.poste,
+            vgpFournit: row.vgp_fournit || row.vpg_fournit,
             statut: statut as any,
           },
         });

@@ -3,20 +3,24 @@ export declare class StatsController {
     private svc;
     constructor(svc: StatsService);
     getDashboard(): Promise<{
-        totalOuvriers: number;
+        totalCollaborateurs: number;
         totalEngins: number;
         totalAppareils: number;
-        ouvriersConformes: number;
-        ouvriersNonConformes: number;
+        collaborateursConformes: number;
+        collaborateursNonConformes: number;
         enginsConformes: number;
         enginsNonConformes: number;
         enginsExpireBientot: number;
         appareilsDisponibles: number;
         appareilsIndisponibles: number;
         habExpirantBientot: number;
-        tauxConformiteOuvriers: number;
+        tauxConformiteCollaborateurs: number;
         tauxConformiteEngins: number;
         tauxDisponibiliteAppareils: number;
         alertesTotal: number;
+        totalOuvriers: number;
+        ouvriersConformes: number;
+        ouvriersNonConformes: number;
+        tauxConformiteOuvriers: number;
     }>;
 }
